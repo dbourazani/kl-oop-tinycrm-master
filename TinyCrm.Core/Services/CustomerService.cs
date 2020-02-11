@@ -44,17 +44,15 @@ namespace TinyCrm.Core.Services
                     query = query.Where(
                         c => c.Email == options.Email);
                 }
-                if(options.FirstName != null)
+                if(string.IsNullOrWhiteSpace(options.FirstName))
                 {
                     query = query.Where(c => 
-                        c.FirstName.Contains(options.FirstName).ToString() 
-                                            == options.FirstName);
+                        c.FirstName.Contains(options.FirstName));
                 }
-                if(options.LastName != null)
+                if(string.IsNullOrWhiteSpace(options.LastName))
                 {
                     query = query.Where(c => 
-                        c.FirstName.Contains(options.LastName).ToString() 
-                                            == options.LastName);
+                        c.FirstName.Contains(options.LastName));
                 }
                 return query.ToList();
             

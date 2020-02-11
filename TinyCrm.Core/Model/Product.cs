@@ -28,6 +28,6 @@ namespace TinyCrm.Core.Model
         /// 
         /// </summary>
         public string Description { get; set; }
-
+        public int? InStock { get; set; }
     }
 }

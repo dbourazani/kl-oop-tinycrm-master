@@ -26,5 +26,6 @@ namespace TinyCrm.Core.Model.Options
         /// 
         /// </summary>
         public ProductCategory Category { get; set; }
+
     }
 }

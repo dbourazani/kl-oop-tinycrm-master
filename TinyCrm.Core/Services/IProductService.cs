@@ -11,5 +11,6 @@ namespace TinyCrm.Core.Services
     {
         public List<Product> SearchProduct(SearchProductOptions options);
         public Product CreateProduct(CreateProductOptions options);
+        public int? SumOfStocks();
     }
 }

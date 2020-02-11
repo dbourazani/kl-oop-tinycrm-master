@@ -54,9 +54,8 @@ namespace TinyCrm.Core.Services
                 {
                     query = query.Where(c => c.Price >= options.PriceMin.Value); 
                 }
-
-                return query.ToList() ;
-            
+                
+                return query.ToList() ;  
         }
 
         public Product CreateProduct(CreateProductOptions options)
@@ -82,6 +81,17 @@ namespace TinyCrm.Core.Services
                 context.Set<Product>().Add(product);
                 context.SaveChanges();
                 return product;
+        }
+        public int? SumOfStocks()
+        {
+           
+            var query = context
+                    .Set<Product>()
+                    .AsQueryable();
+
+
+            var totalStock = query.Sum(c => c.InStock);
+            return totalStock;
             
         }
     }
