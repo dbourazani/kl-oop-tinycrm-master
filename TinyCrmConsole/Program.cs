@@ -60,7 +60,7 @@ namespace TinyCrmConsole
                 {
                     Name = "laptop",
                     InStock = 5,
-                    Id = "7"
+                    Id = "8"
                 });
                
               context.SaveChanges();
