@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TinyCrm.Core.Data;
 using TinyCrm.Core.Model;
 using TinyCrm.Core.Model.Options;
 

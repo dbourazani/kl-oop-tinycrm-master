@@ -8,16 +8,24 @@ using TinyCrm.Core.Model.Options;
 
 namespace TinyCrm.Core.Services
 {
-    class ProductService
+    public class ProductService : IProductService 
     {
+        private TinyCrmDbContext context;
+        public ProductService(TinyCrmDbContext dbContext)
+        {
+            context = dbContext;
+        }
+        public ProductService()
+        {
+            var context = new TinyCrmDbContext();
+        }
         public List<Product> SearchProduct(SearchProductOptions options)
         {
             if (options == null)
             {
                 return null;
             }
-            using (var context = new TinyCrmDbContext())
-            {
+            
                 var query = context
                     .Set<Product>()
                     .AsQueryable();
@@ -48,7 +56,7 @@ namespace TinyCrm.Core.Services
                 }
 
                 return query.ToList() ;
-            }
+            
         }
 
         public Product CreateProduct(CreateProductOptions options)
@@ -66,8 +74,7 @@ namespace TinyCrm.Core.Services
             {
                 return null;
             }
-            using (var context = new TinyCrmDbContext())
-            {
+            
                 product.Id = options.Id;
                 product.Name = options.Name;
                 product.Price = options.Price;
@@ -75,7 +82,6 @@ namespace TinyCrm.Core.Services
                 context.Set<Product>().Add(product);
                 context.SaveChanges();
                 return product;
-            }
             
         }
     }

@@ -17,26 +17,33 @@ namespace TinyCrmConsole
     {
         static void Main(string[] args)
         {
-            ICustomerService customerService = new CustomerService();
-            //var results = customerService.Search(null);
-
-            //Console.WriteLine($"Found {results.Count()} customers");
-            var options = new CreateCustomerOptions()
+            using (var context = new TinyCrmDbContext())
             {
-                FirstName = "Eleana",
-                VatNumber = "ere342",
-                Email = "eleana@gmail.com"
-            };
+               
 
-            var result = customerService.Create(options);
 
-            IProductService productService = new ProductService(); 
-            var optionsForProduct = new CreateProductOptions()
-            {
-                Name = " dbgsgks",
-                Price = 12m
-            };
-            var resultProduct= customerService.CreateProduct(optionsForProduct);
+                    ICustomerService service = new CustomerService(context) ;
+                    //var results = customerService.Search(null);
+
+                    //Console.WriteLine($"Found {results.Count()} customers");
+                    var options = new CreateCustomerOptions()
+                    {
+                        FirstName = "Eleana",
+                        VatNumber = "ere342",
+                        Email = "eleana@gmail.com"
+                    };
+
+                    var result = service.Create(options);
+
+                    IProductService productService = new ProductService(context);
+                    var optionsForProduct = new CreateProductOptions()
+                    {
+                        Name = " dbgsgks",
+                        Price = 12m
+                    };
+                    var resultProduct = productService.CreateProduct(optionsForProduct);
+                
+            }
         }
     }
 }

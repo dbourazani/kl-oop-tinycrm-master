@@ -1,4 +1,6 @@
 ﻿
+using TinyCrm.Core.Data;
+
 namespace TinyCrm.Core.Model
 {
     /// <summary>
@@ -36,5 +38,6 @@ namespace TinyCrm.Core.Model
         /// </summary>
         public string FirstName { get; set; }
         public int Age { get; set; }
+        
     }
 }
