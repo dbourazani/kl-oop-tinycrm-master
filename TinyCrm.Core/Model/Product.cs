@@ -8,7 +8,7 @@ namespace TinyCrm.Core.Model
         /// <summary>
         /// 
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; }//to dhlvnv string giati ta pernav egv xerata
 
         /// <summary>
         /// 

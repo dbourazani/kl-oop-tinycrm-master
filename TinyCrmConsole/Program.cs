@@ -50,19 +50,21 @@ namespace TinyCrmConsole
                 };
                 var results = service.Search(optionsCustomer);
 
-                var product = new List<Product>{
-                    new Product
+                context.Add(new Product
                 {
                     Name = "mobile",
-                    InStock = 4
-                },
-                    new Product
-                    {
-                        Name ="usb",
-                        InStock =5
-
-                    }
-            };
+                    InStock = 5,
+                    Id = "6"
+                });
+                context.Add(new Product
+                {
+                    Name = "laptop",
+                    InStock = 5,
+                    Id = "7"
+                });
+               
+              context.SaveChanges();
+                var sum = productService.SumOfStocks();
             }
         }
     }
