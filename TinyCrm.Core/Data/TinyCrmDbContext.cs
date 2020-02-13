@@ -42,7 +42,19 @@ namespace TinyCrm.Core.Data
                 .Property(c => c.VatNumber)
                 .HasMaxLength(9)
                 .IsFixedLength();
-                
+
+            modelBuilder
+                .Entity<Model.Order>()
+                .ToTable("Order", "core");
+            
+            modelBuilder
+                .Entity<Model.OrderProduct>()
+                .ToTable("OrderProduct", "core");
+
+            modelBuilder
+                .Entity<Model.OrderProduct>()
+                .HasKey(op => new { op.OrderId, op.ProductId});   
+
             modelBuilder
                .Entity<Model.Product>()
                .ToTable("Product", "core");

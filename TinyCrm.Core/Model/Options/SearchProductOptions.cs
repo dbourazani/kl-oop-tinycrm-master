@@ -1,11 +1,13 @@
-﻿namespace TinyCrm.Core.Model.Options
+﻿using System;
+
+namespace TinyCrm.Core.Model.Options
 {
     /// <summary>
     /// 
     /// </summary>
     public class SearchProductOptions
     { 
-       public string Id { get; set; }
+       public Guid Id { get; set; }
         /// <summary>
         /// 
         /// </summary>

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TinyCrm.Core.Data;
 
 namespace TinyCrm.Core.Migrations
 {
     [DbContext(typeof(TinyCrmDbContext))]
-    partial class TinyCrmDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200213135114_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +66,7 @@ namespace TinyCrm.Core.Migrations
                     b.Property<DateTimeOffset>("CreatedDateTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Deliveryaddress")
@@ -126,11 +128,9 @@ namespace TinyCrm.Core.Migrations
 
             modelBuilder.Entity("TinyCrm.Core.Model.Order", b =>
                 {
-                    b.HasOne("TinyCrm.Core.Model.Customer", "Customer")
+                    b.HasOne("TinyCrm.Core.Model.Customer", null)
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("TinyCrm.Core.Model.OrderProduct", b =>

@@ -8,20 +8,22 @@ using Xunit;
 
 namespace TinyCrm.Test
 {
-    public class CustomerServiceTests
+    public class CustomerServiceTests :
+        IClassFixture<TinyCrmFixture>
     {
         private TinyCrmDbContext context_;
+        private ICustomerService customers_; 
    
-        public CustomerServiceTests()
+        public CustomerServiceTests(
+            TinyCrmFixture fixture)
         {
-            context_ = new TinyCrmDbContext();
+            context_ = fixture.Context ;
+            customers_ = fixture.Customers; 
         }
 
         [Fact]
         public void CreateCustomerSuccess()
         {
-            ICustomerService customerService =
-                new CustomerService(context_);
 
             var options = new CreateCustomerOptions()
             {
@@ -29,7 +31,7 @@ namespace TinyCrm.Test
                 Email = "dkgdgkg@hl",
                 VatNumber = "123456779"
             };
-            var customer = customerService.Create(options);
+            var customer = customers_.Create(options);
 
             Assert.NotNull(customer);  
             Assert.Equal(options.Email, customer.Email);
@@ -42,7 +44,7 @@ namespace TinyCrm.Test
                 Email = options.Email,
                 VatNumber = options.VatNumber
             };
-            var customers = customerService.Search(option1);
+            var customers = customers_.Search(option1);
 
             Assert.NotNull(customer);
             var length = customers.Count;
@@ -56,29 +58,27 @@ namespace TinyCrm.Test
         [Fact]
         public void CreateCustomer_Fail_Null_VatNumber()
         {
-            ICustomerService customerService =
-                new CustomerService(context_);
+           ;
             var options = new CreateCustomerOptions()
             {
                 FirstName = "dimitra",
                 Email = "dkgdgkg@hl",
                 VatNumber = null
             };
-            var customer = customerService.Create(options);
+            var customer = customers_.Create(options);
             Assert.Null(customer);  
         }
         [Fact]
         public void CreateCustomer_Fail_Email()
         {
-            ICustomerService customerService =
-                new CustomerService(context_);
+            
             var options = new CreateCustomerOptions()
             {
                 FirstName = "dimitra",
                 Email = null,
                 VatNumber = "123456789"
             };
-            var customer = customerService.Create(options);
+            var customer = customers_.Create(options);
             Assert.Null(customer);
             options = new CreateCustomerOptions()
             {
@@ -101,22 +101,21 @@ namespace TinyCrm.Test
         [Fact]
         public void SearchCustomerSuccess()
         {
-            ICustomerService customerService =
-                new CustomerService(context_);
+            
             var optionsCreateCustomer = new CreateCustomerOptions()
             {
                 FirstName = "dimitra",
                 Email = "dimitra@hotmail.gr",
                 VatNumber = "012345678"
             };
-            var customer = customerService.Create(optionsCreateCustomer);
+            var customer = customers_.Create(optionsCreateCustomer);
             var optionsSearchCustomer = new SearchCustomerOptions()
             {
                 FirstName = optionsCreateCustomer.FirstName,
                 Email = optionsCreateCustomer.Email,
                 VatNumber = optionsCreateCustomer.VatNumber
             };
-            var customer2 = customerService.Search(optionsSearchCustomer);
+            var customer2 = customers_.Search(optionsSearchCustomer);
             Assert.NotNull(customer2);
             //Assert.NotEmpty(customer2);  
        
@@ -124,22 +123,21 @@ namespace TinyCrm.Test
         [Fact]
         public void SearchCustomerFail()
         {
-            ICustomerService customerService =
-                new CustomerService(context_);
+          
             var optionsCreateCustomer = new CreateCustomerOptions()
             {
                 FirstName = "dimitra",
                 Email = "dimitra@hotmail.gr",
                 VatNumber = "412375678"
             };
-            var customer = customerService.Create(optionsCreateCustomer);
+            var customer = customers_.Create(optionsCreateCustomer);
             var optionsSearchCustomer = new SearchCustomerOptions()
             {
                 FirstName = null,
                 Email = null,
                 VatNumber = null
             };
-            var customer2 = customerService.Search(optionsSearchCustomer);
+            var customer2 = customers_.Search(optionsSearchCustomer);
             Assert.Null(customer2);   
         }
 

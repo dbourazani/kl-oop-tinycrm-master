@@ -7,30 +7,33 @@ using Xunit;
 
 namespace TinyCrm.Test
 {
-    public class ProductServiceTests
-    {
-        private TinyCrmDbContext context_;
+    public class ProductServiceTests :
+        IClassFixture<TinyCrmFixture> //me ayto ton tropo den janagrafw ta ta IProduct..... synexeia
+    {                                  //ayto to interface den exei kamia me8odo
 
-        public ProductServiceTests()
+        private TinyCrmDbContext context_;
+        private IProductService products_;  
+        public ProductServiceTests(
+            TinyCrmFixture fixture)
         {
-            context_ = new TinyCrmDbContext();
+            context_ = fixture.Context ;
+            products_ = fixture.Products; 
         }
 
         [Fact]
         public void CreateProductSuccess()
         {
-            IProductService productService =
-                new ProductService(context_);
+           
             var options = new CreateProductOptions()
             {
-                Id = "87",
+               
                 Name = "mobile",
                 Code  = "1",
                 Price = 5m,
                 Category = ProductCategory.Laptops
             };
 
-            var product = productService.CreateProduct(options);
+            var result = products_.CreateProduct(options);
             var optionsSearch = new SearchProductOptions()
             {
                 Name = options.Name,
@@ -39,23 +42,27 @@ namespace TinyCrm.Test
                 
                 
             };
-            var products = productService.SearchProduct(optionsSearch);   
-            Assert.NotNull(product); 
+            var products = products_.SearchProduct(optionsSearch);   
+            Assert.NotNull(result);
+            Assert.NotNull(result.Data);
+            Assert.Equal(StatusCode.Success, result.ErrorCode); 
+
               
         }
         [Fact]
         public void CreateProductFail()
         {
-            IProductService productService =
-                new ProductService(context_);
+           
             var options = new CreateProductOptions()
             { 
                 Price = null,
                 Name = "mobile",
                 Code = "1",
                 Category = ProductCategory.Laptops
-            }; var product = productService.CreateProduct(options);
+            }; var product = products_.CreateProduct(options);
             Assert.Null(product);
+            
+
 
             options = new CreateProductOptions()
             { 
@@ -65,7 +72,7 @@ namespace TinyCrm.Test
                 Category = ProductCategory.Laptops
             };
 
-            product = productService.CreateProduct(options);
+            product = products_.CreateProduct(options);
             Assert.Null(product);
 
             options = new CreateProductOptions()
@@ -76,7 +83,7 @@ namespace TinyCrm.Test
                 Category = ProductCategory.Laptops
             };
 
-            product = productService.CreateProduct(options);
+            product = products_.CreateProduct(options);
             Assert.Null(product);
             options = new CreateProductOptions()
             { 
@@ -86,15 +93,14 @@ namespace TinyCrm.Test
                 Category = ProductCategory.Invalid 
             };
 
-            product = productService.CreateProduct(options);
+            product = products_.CreateProduct(options);
             Assert.Null(product);
         }
 
         [Fact]
         public void SearchProductSuccess()
         {
-            IProductService productService =
-               new ProductService(context_);
+           
       
             var options = new CreateProductOptions()
             {
@@ -103,14 +109,14 @@ namespace TinyCrm.Test
                 Code = "1",
                
             }; 
-            var product = productService.CreateProduct(options);
+            var product = products_.CreateProduct(options);
             var optionsCreate = new SearchProductOptions()
             {
                 Price = 5,
                 Name = "mobile",
                 Code = "1",
             };
-            var products = productService.SearchProduct(optionsCreate);
+            var products = products_.SearchProduct(optionsCreate);
             Assert.NotNull(products);
               
         }

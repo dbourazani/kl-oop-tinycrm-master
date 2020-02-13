@@ -10,7 +10,7 @@ namespace TinyCrm.Core.Services
     public interface IProductService
     {
         public List<Product> SearchProduct(SearchProductOptions options);
-        public Product CreateProduct(CreateProductOptions options);
+        public APIResult<Product> CreateProduct(CreateProductOptions options);
         public int? SumOfStocks();
     }
 }

@@ -21,6 +21,8 @@ namespace TinyCrm.Core.Services
         }
         public List<Product> SearchProduct(SearchProductOptions options)
         {
+            
+            
             if (options == null)
             {
                 return null;
@@ -28,12 +30,12 @@ namespace TinyCrm.Core.Services
             
                 var query = context
                     .Set<Product>()
-                    .AsQueryable();
+                    .AsQueryable();//to kanw gia na bazw kai alles function opws h where kai ta loipa
 
-                if (options.Id != null)
-                {
-                    query = query.Where(c => c.Id == options.Id);
-                }
+                //if (options.Id != null)
+                //{
+                //    query = query.Where(c => c.Id.ToString()  == options.Id);
+                //}
                 if (options.Code != null)
                 {
                     query = query.Where(c => c.Code == options.Code);
@@ -62,29 +64,35 @@ namespace TinyCrm.Core.Services
                 return query.ToList() ;  
         }
 
-        public Product CreateProduct(CreateProductOptions options)
+        public APIResult<Product> CreateProduct(CreateProductOptions options)
         {
-            var product = new Product();
+            var result = new APIResult<Product>();
+            
             if(options == null)
             {
-                return null;
+                result.ErrorCode = StatusCode.BadRequest;
+                result.ErrorText = "null option";
+                return result;
             }
 
-            if(options.Id ==null ||
-                options.Name == null ||
+            if( options.Name == null ||
                 options.Price == null ||
                 options.Category == 0)
             {
-                return null;
+                result.ErrorCode = StatusCode.BadRequest ;
+                result.ErrorText = "not correct data"; 
+                return result;
             }
-            
-                product.Id = options.Id;
+                var product = new Product();
+                //product.Id = options.Id;
                 product.Name = options.Name;
                 product.Price = options.Price;
                 product.Category = options.Category;
                 context.Set<Product>().Add(product);
                 context.SaveChanges();
-                return product;
+
+                result.Data = product;  
+                return result;
         }
         public int? SumOfStocks()
         {

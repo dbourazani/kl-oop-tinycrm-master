@@ -1,4 +1,5 @@
 ﻿using NewConsoleApp;
+using System;
 
 namespace TinyCrm.Core.Model.Options
 {
@@ -10,11 +11,11 @@ namespace TinyCrm.Core.Model.Options
         /// <summary>
         /// 
         /// </summary>
-        public string Id { get; set; }
+        //public Guid Id { get; set; }den mas xreiazetai giati to guid to ftiaxnei apo mono toy
 
-        /// <summary>
-        /// 
-        /// </summary>
+        ///// <summary>
+        ///// 
+        ///// </summary>
         public string Name { get; set; }
 
         /// <summary>
