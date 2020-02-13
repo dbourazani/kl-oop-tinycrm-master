@@ -10,7 +10,7 @@ namespace TinyCrm.Core.Services
 {
     public class ProductService : IProductService 
     {
-        private TinyCrmDbContext context;
+        public TinyCrmDbContext context;
         public ProductService(TinyCrmDbContext dbContext)
         {
             context = dbContext;
@@ -38,6 +38,10 @@ namespace TinyCrm.Core.Services
                 {
                     query = query.Where(c => c.Code == options.Code);
                 }
+            else
+            {
+                return null;
+            }
                 if (options.Description  != null)
                 {
                     query = query.Where(c => c.Description.

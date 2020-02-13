@@ -54,13 +54,13 @@ namespace TinyCrmConsole
                 {
                     Name = "mobile",
                     InStock = 5,
-                    Id = "6"
+                    Id = "55"
                 });
                 context.Add(new Product
                 {
                     Name = "laptop",
                     InStock = 5,
-                    Id = "8"
+                    Id = "56"
                 });
                
               context.SaveChanges();

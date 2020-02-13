@@ -38,18 +38,22 @@ namespace TinyCrm.Core.Services
                     query = query.Where(
                         c => c.VatNumber == options.VatNumber);
                 }
+                else
+            {
+                return null; 
+            }
 
                 if (options.Email != null)
                 {
                     query = query.Where(
                         c => c.Email == options.Email);
                 }
-                if(string.IsNullOrWhiteSpace(options.FirstName))
+                if(!string.IsNullOrWhiteSpace(options.FirstName))
                 {
                     query = query.Where(c => 
                         c.FirstName.Contains(options.FirstName));
                 }
-                if(string.IsNullOrWhiteSpace(options.LastName))
+                if(!string.IsNullOrWhiteSpace(options.LastName))
                 {
                     query = query.Where(c => 
                         c.FirstName.Contains(options.LastName));
@@ -70,8 +74,7 @@ namespace TinyCrm.Core.Services
                 return null;
             }
             if (!options.Email.Contains("@")
-                || options.VatNumber.Length != 9
-                || !options.VatNumber.Contains("0123456789"))
+                || options.VatNumber.Length > 9)
             {
                 return null;
             }
