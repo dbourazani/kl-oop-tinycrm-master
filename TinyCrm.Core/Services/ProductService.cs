@@ -8,16 +8,24 @@ using TinyCrm.Core.Model.Options;
 
 namespace TinyCrm.Core.Services
 {
-    class ProductService
+    public class ProductService : IProductService 
     {
+        public TinyCrmDbContext context;
+        public ProductService(TinyCrmDbContext dbContext)
+        {
+            context = dbContext;
+        }
+        public ProductService()
+        {
+            var context = new TinyCrmDbContext();
+        }
         public List<Product> SearchProduct(SearchProductOptions options)
         {
             if (options == null)
             {
                 return null;
             }
-            using (var context = new TinyCrmDbContext())
-            {
+            
                 var query = context
                     .Set<Product>()
                     .AsQueryable();
@@ -30,6 +38,10 @@ namespace TinyCrm.Core.Services
                 {
                     query = query.Where(c => c.Code == options.Code);
                 }
+            else
+            {
+                return null;
+            }
                 if (options.Description  != null)
                 {
                     query = query.Where(c => c.Description.
@@ -46,9 +58,8 @@ namespace TinyCrm.Core.Services
                 {
                     query = query.Where(c => c.Price >= options.PriceMin.Value); 
                 }
-
-                return query.ToList() ;
-            }
+                
+                return query.ToList() ;  
         }
 
         public Product CreateProduct(CreateProductOptions options)
@@ -66,8 +77,7 @@ namespace TinyCrm.Core.Services
             {
                 return null;
             }
-            using (var context = new TinyCrmDbContext())
-            {
+            
                 product.Id = options.Id;
                 product.Name = options.Name;
                 product.Price = options.Price;
@@ -75,7 +85,17 @@ namespace TinyCrm.Core.Services
                 context.Set<Product>().Add(product);
                 context.SaveChanges();
                 return product;
-            }
+        }
+        public int? SumOfStocks()
+        {
+           
+            var query = context
+                    .Set<Product>()
+                    .AsQueryable();
+
+
+            var totalStock = query.Sum(c => c.InStock);
+            return totalStock;
             
         }
     }

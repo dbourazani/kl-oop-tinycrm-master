@@ -34,6 +34,16 @@ namespace TinyCrm.Core.Data
                 .Entity<Model.Customer>()
                 .ToTable("Customer", "core");//namespace
             modelBuilder
+                 .Entity<Model.Customer>()
+                 .HasIndex(c => c.VatNumber)//kathgoriopoiw tous customers bash to vatnumber. to kanei kai gia to id bydefault   
+                 .IsUnique();             //to kanei monadiko, san dikleida asfaleias
+            modelBuilder
+                .Entity<Model.Customer>()
+                .Property(c => c.VatNumber)
+                .HasMaxLength(9)
+                .IsFixedLength();
+                
+            modelBuilder
                .Entity<Model.Product>()
                .ToTable("Product", "core");
         }
