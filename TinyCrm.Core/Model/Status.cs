@@ -10,6 +10,6 @@ namespace TinyCrm.Core.Model
         Delivered = 1,
         Cancelled = 2,
         Pending = 3
-
     }
 }
+

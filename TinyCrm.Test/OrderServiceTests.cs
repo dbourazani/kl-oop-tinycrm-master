@@ -1,92 +1,72 @@
-﻿using NewConsoleApp;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TinyCrm.Core.Data;
 using TinyCrm.Core.Model;
 using TinyCrm.Core.Model.Options;
 using TinyCrm.Core.Services;
+
 using Xunit;
 
-namespace TinyCrm.Test
+namespace TinyCrm.Tests
 {
     public class OrderServiceTests :
         IClassFixture<TinyCrmFixture>
     {
+        private ICustomerService customer_;
+        private IProductService products_;
         private TinyCrmDbContext context_;
-        private ICustomerService customers_;
-        private IProductService product_;
-
+        private IOrderService order_;
+        private ProductServiceTests productServiceTests_;
+        private CustomerServiceTests customerServiceTests_;
         public OrderServiceTests(
             TinyCrmFixture fixture)
         {
-            
-            customers_ = fixture.Customers;
+            productServiceTests_ =
+                  new ProductServiceTests(fixture);
             context_ = fixture.Context;
-            product_ = fixture.Products;  
+            customer_ = fixture.Customers;
+            products_ = fixture.Products;
+            order_ = fixture.Orders;
+            customerServiceTests_ =
+                new CustomerServiceTests(fixture);
         }
 
         [Fact]
-        public void CreateOrderSuccess()
+        public void CreateOrder_Success()
         {
-            //
-            var option = new CreateCustomerOptions()
+            var customer = customerServiceTests_
+                .CreateCustomer_Success();
+            var p1 = productServiceTests_.AddProduct_Success();
+            var p2 = productServiceTests_.AddProduct_Success();
+
+            var orderOptions = new CreateOrderOptions
             {
-                FirstName = "Dimitra",
-                Email = "gfjhhfj@j",
-                VatNumber ="123456789"
+                CustomerId = customer.Id,
+                ProductIds = new List<Guid>() { p1.Id, p2.Id }
             };
-            var customer = customers_.Create(option);
-            Assert.NotNull(customer);
+            var createorder = order_.CreateOrder(orderOptions);
 
-            var optionProduct = new CreateProductOptions()
+            Assert.True(createorder.Success);
+
+
+            var orderId = createorder.Data.Id;
+            var order = context_.Set<Order>()
+                //.Include(o=> o.OrderProducts)
+                .Where(o => o.Id == orderId)
+                .SingleOrDefault();
+            Assert.NotNull(order);
+
+            foreach (var id in orderOptions.ProductIds)
             {
-                Category = ProductCategory.HardDisks ,
-                Price = 100m,
-                Name ="product2"
-                
-            };
+                var op = order.OrderProducts
+                    .Where(p => p.ProductId == id)
+                    .SingleOrDefault();
 
-            var presult = product_.CreateProduct(optionProduct);
-            Assert.Equal(StatusCode.Success, presult.ErrorCode);
-            var optionProduct2 = new CreateProductOptions()
-            {
-                Category = ProductCategory.Laptops,
-                Price = 100m,
-                Name ="product1"
-                
-            };
-
-            var presult2 = product_.CreateProduct(optionProduct2);
-            Assert.Equal(StatusCode.Success, presult2.ErrorCode);     
-            var order = new Order()
-            {
-                Status = Status.Delivered,
-                Deliveryaddress = "davarh 5",
-                CreatedDateTime = DateTimeOffset.Now,
-              
-            };
-
-            order.OrderProducts.Add(
-               new OrderProduct()
-               {
-                   Product = presult.Data
-               });
-            order.OrderProducts.Add(
-                new OrderProduct()
-                {
-                    Product = presult2.Data
-                });
-
-            customer.Orders.Add(order);
-            context_.SaveChanges();
-            var dbOrder = context_.Set<Order>()
-                .SingleOrDefault(o => o.Id == order.Id);
-            Assert.NotNull(dbOrder);
-            Assert.Equal(order.Deliveryaddress, dbOrder.Deliveryaddress);  
+                Assert.NotNull(op);
+            }
         }
 
-        
     }
 }

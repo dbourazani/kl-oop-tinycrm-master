@@ -1,6 +1,4 @@
-﻿
-using System.Collections.Generic;
-using TinyCrm.Core.Data;
+﻿using System.Collections.Generic;
 
 namespace TinyCrm.Core.Model
 {
@@ -39,12 +37,12 @@ namespace TinyCrm.Core.Model
         /// </summary>
         public string FirstName { get; set; }
         public int Age { get; set; }
+
         public List<Order> Orders { get; set; }
 
         public Customer()
         {
-            Orders = new List<Order>(); 
+            Orders = new List<Order>();
         }
-        
     }
 }

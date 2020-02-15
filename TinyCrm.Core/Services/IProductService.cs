@@ -1,16 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TinyCrm.Core.Data;
+﻿using TinyCrm.Core.Model.Options;
 using TinyCrm.Core.Model;
-using TinyCrm.Core.Model.Options;
+using System;
+using System.Linq;
 
 namespace TinyCrm.Core.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IProductService
     {
-        public List<Product> SearchProduct(SearchProductOptions options);
-        public APIResult<Product> CreateProduct(CreateProductOptions options);
-        public int? SumOfStocks();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        ApiResult<Product> AddProduct(AddProductOptions options);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        bool UpdateProduct(Guid productId,
+            UpdateProductOptions options);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        ApiResult<Product> GetProductById(Guid id);
+        public int SumOfStocks();
+        public IQueryable<Product> SearchProduct(SearchProductOptions options);
     }
 }

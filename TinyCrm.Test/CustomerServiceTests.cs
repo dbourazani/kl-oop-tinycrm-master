@@ -1,145 +1,113 @@
 using System;
-using TinyCrm.Core.Data;
-using TinyCrm.Core.Model;
-using TinyCrm.Core.Model.Options;
-using TinyCrm.Core.Services;
 using Xunit;
 
+using TinyCrm.Core.Data;
+using TinyCrm.Core.Model;
+using TinyCrm.Core.Services;
+using TinyCrm.Core.Model.Options;
+using System.Linq;
 
-namespace TinyCrm.Test
+namespace TinyCrm.Tests
 {
-    public class CustomerServiceTests :
-        IClassFixture<TinyCrmFixture>
+    public class CustomerServiceTests : IClassFixture<TinyCrmFixture>
     {
         private TinyCrmDbContext context_;
-        private ICustomerService customers_; 
-   
-        public CustomerServiceTests(
-            TinyCrmFixture fixture)
+
+        public CustomerServiceTests(TinyCrmFixture fixture)
         {
-            context_ = fixture.Context ;
-            customers_ = fixture.Customers; 
+            context_ = fixture.Context;
         }
 
         [Fact]
-        public void CreateCustomerSuccess()
+        public Customer CreateCustomer_Success()
         {
+            ICustomerService customerService =
+                new CustomerService(context_);
 
             var options = new CreateCustomerOptions()
             {
-                FirstName = "dimitra",
-                Email = "dkgdgkg@hl",
-                VatNumber = "123456779"
+                Email = "dd@dd.gr",
+                FirstName = "Dimmitris",
+                VatNumber = $"111{DateTimeOffset.Now:ffffff}",
             };
-            var customer = customers_.Create(options);
+            var customer = customerService.Create(options);
 
-            Assert.NotNull(customer);  
+            Assert.NotNull(customer);
             Assert.Equal(options.Email, customer.Email);
             Assert.Equal(options.VatNumber, customer.VatNumber);
             Assert.Equal(options.FirstName, customer.FirstName);
-            
-            var option1 = new SearchCustomerOptions()
+
+            var options1 = new SearchCustomerOptions()
             {
-                FirstName = options.FirstName,
                 Email = options.Email,
+                FistName = options.FirstName,
                 VatNumber = options.VatNumber
             };
-            var customers = customers_.Search(option1);
+
+            var dbCustomer = customerService
+                .Search(options1)
+                .Where(c => c.Id == 123)
+                .ToList()
+                .Where(c => c.Age > 15)
+                .SingleOrDefault();
 
             Assert.NotNull(customer);
-            var length = customers.Count;
-            Assert.True(length == 1);//elegxoume ama exei ginei h egrafh. opote prpei ka8e customer na exei mia egrafh 
-            //alliws Assert.Single(customers);
-            var dbCustomer = customers[0];
-            Assert.Equal(customer.Id, dbCustomer.Id); 
-            
-         }
-        
+
+            Assert.Equal(customer.Id, dbCustomer.Id);
+            return customer;
+        }
+
         [Fact]
         public void CreateCustomer_Fail_Null_VatNumber()
         {
-           ;
+            ICustomerService customerService =
+                new CustomerService(context_);
+
             var options = new CreateCustomerOptions()
             {
-                FirstName = "dimitra",
-                Email = "dkgdgkg@hl",
+                Email = "dd@dd.gr",
+                FirstName = "Dimmitris",
                 VatNumber = null
             };
-            var customer = customers_.Create(options);
-            Assert.Null(customer);  
+            var customer = customerService.Create(options);
+            Assert.Null(customer);
         }
+
         [Fact]
         public void CreateCustomer_Fail_Email()
         {
-            
+            ICustomerService customerService =
+                new CustomerService(context_);
+
             var options = new CreateCustomerOptions()
             {
-                FirstName = "dimitra",
-                Email = null,
-                VatNumber = "123456789"
+                Email = "dddd.gr",
+                FirstName = "Dimmitris",
+                VatNumber = "12312312"
             };
-            var customer = customers_.Create(options);
+
+            var customer = customerService.Create(options);
             Assert.Null(customer);
+
             options = new CreateCustomerOptions()
             {
-                FirstName = "dimitra",
-                Email = "gjhjh",
-                VatNumber = "123456789"
+                Email = "     ",
+                FirstName = "Dimmitris",
+                VatNumber = "12312312"
             };
-            
+
+            customer = customerService.Create(options);
             Assert.Null(customer);
+
             options = new CreateCustomerOptions()
             {
-                FirstName = "dimitra",
-                Email = "  ",
-                VatNumber = "123456789"
+                Email = null,
+                FirstName = "Dimmitris",
+                VatNumber = "12312312"
             };
-            
+
+            customer = customerService.Create(options);
             Assert.Null(customer);
         }
-
-        [Fact]
-        public void SearchCustomerSuccess()
-        {
-            
-            var optionsCreateCustomer = new CreateCustomerOptions()
-            {
-                FirstName = "dimitra",
-                Email = "dimitra@hotmail.gr",
-                VatNumber = "012345678"
-            };
-            var customer = customers_.Create(optionsCreateCustomer);
-            var optionsSearchCustomer = new SearchCustomerOptions()
-            {
-                FirstName = optionsCreateCustomer.FirstName,
-                Email = optionsCreateCustomer.Email,
-                VatNumber = optionsCreateCustomer.VatNumber
-            };
-            var customer2 = customers_.Search(optionsSearchCustomer);
-            Assert.NotNull(customer2);
-            //Assert.NotEmpty(customer2);  
-       
-        } 
-        [Fact]
-        public void SearchCustomerFail()
-        {
-          
-            var optionsCreateCustomer = new CreateCustomerOptions()
-            {
-                FirstName = "dimitra",
-                Email = "dimitra@hotmail.gr",
-                VatNumber = "412375678"
-            };
-            var customer = customers_.Create(optionsCreateCustomer);
-            var optionsSearchCustomer = new SearchCustomerOptions()
-            {
-                FirstName = null,
-                Email = null,
-                VatNumber = null
-            };
-            var customer2 = customers_.Search(optionsSearchCustomer);
-            Assert.Null(customer2);   
-        }
-
     }
 }

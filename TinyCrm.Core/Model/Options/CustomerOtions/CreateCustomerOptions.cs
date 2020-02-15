@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TinyCrm.Core.Model
+namespace TinyCrm.Core.Model.Options
 {
-    public class SearchCustomerOptions
+    public class CreateCustomerOptions
     {
-        public int? Id { get; set; }
-
         public string VatNumber { get; set; }
-
         public string Email { get; set; }
         public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
 }

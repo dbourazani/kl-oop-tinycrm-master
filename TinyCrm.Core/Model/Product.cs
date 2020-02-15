@@ -5,11 +5,10 @@ namespace TinyCrm.Core.Model
 {
     public class Product
     {
-        public string Code { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public Guid Id { get; set; }//to dhlvnv string giati ta pernav egv xerata
+        public Guid Id { get; set; }
 
         /// <summary>
         /// 
@@ -19,20 +18,28 @@ namespace TinyCrm.Core.Model
         /// <summary>
         /// 
         /// </summary>
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal Discount { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public ProductCategory Category { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Description { get; set; }
-        public int? InStock { get; set; }
+
+        public int InStock { get; set; }
+
         public Product()
         {
-            //Id = Guid.NewGuid(); 
+            //Id = Guid.NewGuid();
         }
     }
 }

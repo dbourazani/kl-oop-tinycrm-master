@@ -35,12 +35,12 @@ namespace TinyCrm.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Code = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Price = table.Column<decimal>(nullable: true),
-                    Category = table.Column<int>(nullable: false),
+                    Price = table.Column<decimal>(nullable: false),
+                    Discount = table.Column<decimal>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    InStock = table.Column<int>(nullable: true)
+                    Category = table.Column<int>(nullable: false),
+                    InStock = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,10 +53,10 @@ namespace TinyCrm.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Deliveryaddress = table.Column<string>(nullable: true),
+                    DeliveryAddress = table.Column<string>(nullable: true),
                     CreatedDateTime = table.Column<DateTimeOffset>(nullable: false),
                     Status = table.Column<int>(nullable: false),
-                    CustomerId = table.Column<int>(nullable: true)
+                    CustomerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +67,7 @@ namespace TinyCrm.Core.Migrations
                         principalSchema: "core",
                         principalTable: "Customer",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,8 +75,8 @@ namespace TinyCrm.Core.Migrations
                 schema: "core",
                 columns: table => new
                 {
-                    ProductId = table.Column<Guid>(nullable: false),
-                    OrderId = table.Column<Guid>(nullable: false)
+                    OrderId = table.Column<Guid>(nullable: false),
+                    ProductId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {

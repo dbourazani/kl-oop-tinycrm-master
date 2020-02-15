@@ -1,110 +1,191 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TinyCrm.Core.Data;
+
 using TinyCrm.Core.Model;
 using TinyCrm.Core.Model.Options;
+using System;
+using NewConsoleApp;
 
 namespace TinyCrm.Core.Services
 {
-    public class ProductService : IProductService 
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ProductService : IProductService
     {
-        public TinyCrmDbContext context;
-        public ProductService(TinyCrmDbContext dbContext)
+        private TinyCrm.Core.Data.TinyCrmDbContext context;
+        public ProductService(Data.TinyCrmDbContext dbContext)
         {
             context = dbContext;
         }
-        public ProductService()
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public ApiResult<Product> AddProduct(AddProductOptions options)
         {
-            var context = new TinyCrmDbContext();
+            var result = new ApiResult<Product>();
+
+            if (options == null)
+            {
+                result.ErrorCode = StatusCode.BadRequest;
+                result.ErrorText = "null options";
+                return result;
+            }
+
+            if (string.IsNullOrWhiteSpace(options.Name))
+            {
+                result.ErrorCode = StatusCode.BadRequest;
+                result.ErrorText = "null or empty name";
+                return result;
+            }
+
+            if (options.Price <= 0)
+            {
+                result.ErrorCode = StatusCode.BadRequest;
+                result.ErrorText = "negative or zero price";
+                return result;
+
+            }
+
+            if (options.ProductCategory ==
+              ProductCategory.Invalid)
+            {
+                result.ErrorCode = StatusCode.BadRequest;
+                result.ErrorText = "invalid category ";
+                return result;
+            }
+
+            var product = new Product()
+            {
+                Name = options.Name,
+                Price = options.Price,
+                Category = options.ProductCategory
+            };
+
+            context.Add(product);
+            context.SaveChanges();
+
+            result.ErrorCode = StatusCode.Success;
+            result.Data = product;
+            return result;
         }
-        public List<Product> SearchProduct(SearchProductOptions options)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public bool UpdateProduct(Guid productId,
+            UpdateProductOptions options)
         {
-            
-            
+            if (options == null)
+            {
+                return false;
+            }
+
+            var presult = GetProductById(productId);
+            if (!presult.Success)
+            {
+                return false;
+            }
+            var product = presult.Data;
+
+            if (!string.IsNullOrWhiteSpace(options.Description))
+            {
+                product.Description = options.Description;
+            }
+
+            if (options.Price != null &&
+              options.Price <= 0)
+            {
+                return false;
+            }
+
+            if (options.Price != null)
+            {
+                if (options.Price <= 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    product.Price = options.Price.Value;
+                }
+            }
+
+            if (options.Discount != null &&
+              options.Discount < 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ApiResult<Product> GetProductById(Guid id)
+        {
+            var product = context
+                .Set<Product>()
+                .SingleOrDefault(s => s.Id == id);
+
+            if (product == null)
+            {
+                return new ApiResult<Product>(
+                    StatusCode.NotFound, $"Product {id} not found");
+            }
+
+            return ApiResult<Product>.CreateSuccessful(product);
+        }
+
+        public int SumOfStocks()
+        {
+            var sum = context.Set<Product>().AsQueryable().
+                Sum(c => c.InStock);
+
+            return sum;
+        }
+
+        public IQueryable<Product> SearchProduct(SearchProductOptions options)
+        {
+
+
             if (options == null)
             {
                 return null;
             }
-            
-                var query = context
-                    .Set<Product>()
-                    .AsQueryable();//to kanw gia na bazw kai alles function opws h where kai ta loipa
 
-                //if (options.Id != null)
-                //{
-                //    query = query.Where(c => c.Id.ToString()  == options.Id);
-                //}
-                if (options.Code != null)
-                {
-                    query = query.Where(c => c.Code == options.Code);
-                }
-            else
-            {
-                return null;
-            }
-                if (options.Description  != null)
-                {
-                    query = query.Where(c => c.Description.
-                    Contains(options.Description).ToString() 
-                    == options.Description);
-                }
-                if(options.PriceMax != null &&
-                    options.PriceMax > 0)
-                {
-                    query = query.Where(c => c.Price <= options.PriceMax.Value); 
-                }
-                if(options.PriceMin != null &&
-                    options.PriceMin > 0)
-                {
-                    query = query.Where(c => c.Price >= options.PriceMin.Value); 
-                }
-                
-                return query.ToList() ;  
-        }
-
-        public APIResult<Product> CreateProduct(CreateProductOptions options)
-        {
-            var result = new APIResult<Product>();
-            
-            if(options == null)
-            {
-                result.ErrorCode = StatusCode.BadRequest;
-                result.ErrorText = "null option";
-                return result;
-            }
-
-            if( options.Name == null ||
-                options.Price == null ||
-                options.Category == 0)
-            {
-                result.ErrorCode = StatusCode.BadRequest ;
-                result.ErrorText = "not correct data"; 
-                return result;
-            }
-                var product = new Product();
-                //product.Id = options.Id;
-                product.Name = options.Name;
-                product.Price = options.Price;
-                product.Category = options.Category;
-                context.Set<Product>().Add(product);
-                context.SaveChanges();
-
-                result.Data = product;  
-                return result;
-        }
-        public int? SumOfStocks()
-        {
-           
             var query = context
-                    .Set<Product>()
-                    .AsQueryable();
-
-
-            var totalStock = query.Sum(c => c.InStock);
-            return totalStock;
+                .Set<Product>()
+                .AsQueryable();
             
+            
+            if (options.Description != null)
+            {
+                query = query.Where(c => c.Description.
+                Contains(options.Description).ToString()
+                == options.Description);
+            }
+            if (options.PriceMax != null &&
+                options.PriceMax > 0)
+            {
+                query = query.Where(c => c.Price <= options.PriceMax.Value);
+            }
+            if (options.PriceMin != null &&
+                options.PriceMin > 0)
+            {
+                query = query.Where(c => c.Price >= options.PriceMin.Value);
+            }
+
+            return query;
         }
     }
 }
