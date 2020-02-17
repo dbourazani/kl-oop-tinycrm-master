@@ -46,12 +46,12 @@ namespace TinyCrm.Tests
 
             var dbCustomer = customerService
                 .Search(options1)
-                .Where(c => c.Id == 123)
-                .ToList()
-                .Where(c => c.Age > 15)
+                .Where(c => c.Id == customer.Id)
+                //.ToList()
+                //.Where(c => c.Age > 15)
                 .SingleOrDefault();
 
-            Assert.NotNull(customer);
+            Assert.NotNull(dbCustomer);
 
             Assert.Equal(customer.Id, dbCustomer.Id);
             return customer;

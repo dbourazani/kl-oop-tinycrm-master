@@ -38,6 +38,15 @@
                 Data = data
             };
         }
+        public static ApiResult<T> CreateUnSuccessful(
+            StatusCode statusCode, string errorText)
+        {
+            return new ApiResult<T>()
+            {
+                ErrorCode = statusCode ,
+                ErrorText = errorText 
+            };
+        }
 
     }
 }

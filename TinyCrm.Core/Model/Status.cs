@@ -7,7 +7,7 @@ namespace TinyCrm.Core.Model
     public enum Status
     {
         Invalid = 0,
-        Delivered = 1,
+        Active = 1,
         Cancelled = 2,
         Pending = 3
     }

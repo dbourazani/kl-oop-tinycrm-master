@@ -31,7 +31,9 @@ namespace TinyCrm.Core.Services
         public ApiResult<Order> CreateOrder(
             CreateOrderOptions createoptions)
         {
-            if (createoptions == null)
+            if (createoptions == null ||
+               (createoptions.ProductIds == null ||
+                createoptions.CustomerId == 0))
             {
                 return new ApiResult<Order>(
                     StatusCode.BadRequest, "null options");
@@ -70,5 +72,49 @@ namespace TinyCrm.Core.Services
 
             return ApiResult<Order>.CreateSuccessful(order);
         }
+
+        public ApiResult<IQueryable <Order>> SearchOrder(
+            SearchOrderOptions searchOrderOptions)
+        {
+            if(searchOrderOptions == null)
+            {
+                return ApiResult<IQueryable<Order>>.CreateUnSuccessful(
+                    StatusCode.BadRequest, "null options");
+            }
+
+            if( searchOrderOptions.CustomerId == null
+                && searchOrderOptions.OrderId ==null
+                && searchOrderOptions.VatNumber == null)
+            {
+                return ApiResult<IQueryable<Order>>.CreateUnSuccessful(
+                    StatusCode.BadRequest, "null options");
+            }
+
+            var query = context_
+                .Set<Order>()
+                .AsQueryable();
+
+            if(searchOrderOptions.CustomerId != 0)
+            {
+                query = query.Where(c => c.CustomerId == 
+                    searchOrderOptions.CustomerId); 
+            }
+
+            if(searchOrderOptions.OrderId != default(Guid))
+            {
+                query = query.Where(c => c.Id ==
+                    searchOrderOptions.OrderId); 
+            }
+
+            if (!String.IsNullOrWhiteSpace(
+                searchOrderOptions.VatNumber))
+            {
+                query = query.Where(c => c.Customer.VatNumber ==
+                    searchOrderOptions.VatNumber); 
+            }
+
+            return ApiResult<IQueryable<Order>>
+                .CreateSuccessful(query); 
+        } 
     }
 }

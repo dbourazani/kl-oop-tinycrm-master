@@ -14,6 +14,7 @@ namespace TinyCrm.Core.Model
         public Customer Customer { get; set; }
 
         public List<OrderProduct> OrderProducts { get; set; }
+        
 
         public Order()
         {

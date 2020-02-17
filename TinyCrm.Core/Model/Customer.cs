@@ -39,6 +39,7 @@ namespace TinyCrm.Core.Model
         public int Age { get; set; }
 
         public List<Order> Orders { get; set; }
+        public decimal? TotalGross{get;set;}
 
         public Customer()
         {
